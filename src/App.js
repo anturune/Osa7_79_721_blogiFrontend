@@ -7,33 +7,9 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 //Buttonien näkyvyyttä säätelemään
 import Togglable from './components/Togglable'
-
-
-//Tällä muotoillaan notificaatio errorille
-//CSS filestä muotoilua
-const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className="error">
-      {message}
-    </div>
-  )
-}
-
-const NotificationBlogAdded = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className="added">
-      {message}
-    </div>
-  )
-}
+import { useDispatch } from 'react-redux'
+import { createNewNotification, removeNotification, likeNotification, credentialsNotification, deleteNotification } from './reducers/notificationReducer'
+import { Notification } from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -41,9 +17,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  //Tilat notificaatioille
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [addedMessage, setAddedMessage] = useState(null)
+  
 
   //Effect hook hakemaan kaikki blogit kun sivu ladataan
   useEffect(() => {
@@ -67,6 +41,8 @@ const App = () => {
     }
   }, [])
 
+  //Tämä tarvitaan reduxia/reducereita varten
+  const dispatch = useDispatch()
   //----------------------- LOGOUT JA LOGIN-----------------------------------
   //Kirjautumislomakkeen lähettämisestä vastaava metodi
   const handleLogin = async (event) => {
@@ -95,9 +71,13 @@ const App = () => {
       setPassword('')
 
     } catch (exception) {
-      setErrorMessage('Wrong username or password')
+      //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+      //"src/components/Notification.js", "store.js" sekä "index.js"
+      //Tällä ilmotaan, kun syöttää joko väärän usernamen tai passwordin
+      dispatch(credentialsNotification())
+      console.log('Wrong username or password')
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch(removeNotification())
       }, 5000)
     }
   }
@@ -175,16 +155,18 @@ const App = () => {
       //Päivitetään näytettävää blogilistaa sis. uuden blogin
       setBlogs(blogsAfterAdd.map(blog => blog))
 
-      //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
-      setAddedMessage(`A new blog  ${blogObject.title}  ${user.name} successfully added`)
+      //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+      //"src/components/Notification.js", "store.js" sekä "index.js"
+      dispatch(createNewNotification(`A new blog  ${blogObject.title}  ${user.name} successfully added`))
       setTimeout(() => {
-        setAddedMessage(null)
+        dispatch(removeNotification())
       }, 5000)
       //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
     } catch (exception) {
-      setErrorMessage('Jokin meni pieleen')
+      //setErrorMessage('Jokin meni pieleen')
+      console.log('JOKIN MENI PIELEEN')
       setTimeout(() => {
-        setErrorMessage(null)
+        //setErrorMessage(null)
       }, 5000)
     }
 
@@ -195,6 +177,7 @@ const App = () => {
   //-----------------LIKETYKSEN LISÄÄMINEN ALKAA-------------------------------------------
 
   const updateBlog = async (blogObject, id) => {
+
     //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
     //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
     //event.preventDefault()
@@ -219,16 +202,26 @@ const App = () => {
       //Päivitetään näytettävää blogilistaa sis. uuden blogin
       setBlogs(blogsAfterUpdate.map(blog => blog))
 
+      //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+      //"src/components/Notification.js", "store.js" sekä "index.js"
+      dispatch(likeNotification(`A blog ${blogObject.title} by  ${user.name}  successfully updated`))
+
+      setTimeout(() => {
+        dispatch(removeNotification())
+      }, 5000)
+      /*
       //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
       setAddedMessage(`A blog ${blogObject.title} by  ${user.name}  successfully updated`)
       setTimeout(() => {
         setAddedMessage(null)
       }, 5000)
+      */
       //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
     } catch (exception) {
-      setErrorMessage('Jokin meni pieleen')
+      //setErrorMessage('Jokin meni pieleen')
+      console.log('Jokin meni pieleen')
       setTimeout(() => {
-        setErrorMessage(null)
+        //setErrorMessage(null)
       }, 5000)
     }
 
@@ -252,17 +245,23 @@ const App = () => {
         const blogsAfterDelete = await blogService.getAll()
         //Päivitetään näytettävää blogilistaa ei sis. deletoitua blogia
         setBlogs(blogsAfterDelete.map(blog => blog))
+
         //Onnistuneesta deletoinnista selaimeen viesti 5 sec
-        setAddedMessage('Blog Successfully deleted!')
+        //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+        //"src/components/Notification.js", "store.js" sekä "index.js"
+        dispatch(deleteNotification())
+
         setTimeout(() => {
-          setAddedMessage(null)
+          dispatch(removeNotification())
         }, 5000)
+
 
         //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
       } catch (exception) {
-        setErrorMessage('Jokin meni pieleen')
+        //setErrorMessage('Jokin meni pieleen')
+        console.log('Jokin meni pieleen ')
         setTimeout(() => {
-          setErrorMessage(null)
+          //setErrorMessage(null)
         }, 5000)
 
       }
@@ -306,10 +305,7 @@ const App = () => {
   //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
   return (
     <div>
-
-      <Notification message={errorMessage} />
-      <NotificationBlogAdded message={addedMessage} />
-
+      <Notification />
       {user === null ?
         loginForm() :
         <div>
