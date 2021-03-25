@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+import React, { useState, useEffect } from 'react'
+//import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import './index.css'
 import blogService from './services/blogs'
 //Login pyyntö 
 import loginService from './services/login'
-//Buttonien näkyvyyttä säätelemään
-import Togglable from './components/Togglable'
+
 import { useDispatch } from 'react-redux'
-import { removeNotification, likeNotification, credentialsNotification, deleteNotification } from './reducers/notificationReducer'
+import { removeNotification, credentialsNotification } from './reducers/notificationReducer'
 import { Notification } from './components/Notification'
 import { initializeBlogs } from './reducers/blogReducer'
 import { BlogList } from './components/BlogList'
 
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  //const [blogs, setBlogs] = useState([])
   //Tilat usernamelle ja salasanalle
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -26,6 +25,7 @@ const App = () => {
 
   const dispatch = useDispatch()
 
+  //Haetaan aluksi effec -hookilla kaikki blogit
   useEffect(() => {
     dispatch(initializeBlogs())
     //Jos ei lisätä hakasulkeiden sisään "dispatch" tulee eslint herja
@@ -138,105 +138,7 @@ const App = () => {
   
  */
 
-  //-----------------LIKETYKSEN LISÄÄMINEN ALKAA-------------------------------------------
 
-  const updateBlog = async (blogObject, id) => {
-
-    //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
-    //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
-    //event.preventDefault()
-    console.log('UUSI BLOGI ON PÄIVITTYMÄSSÄ JA SEN ID', id)
-
-    /*
-    //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
-    //samalla kun uuden muistiinpanon luominen tapahtuu
-    blogFormRef.current.toggleVisibility()
-
-    //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
-    blogService.setToken(user.token)
-*/
-    try {
-      //Luodaan blogi kantaan HUOM! async/await
-      await blogService.updateBlog(blogObject, id)
-
-      //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
-      //HUOM! async/await
-      const blogsAfterUpdate = await blogService.getAll()
-
-      //Päivitetään näytettävää blogilistaa sis. uuden blogin
-      setBlogs(blogsAfterUpdate.map(blog => blog))
-
-      //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
-      //"src/components/Notification.js", "store.js" sekä "index.js"
-      dispatch(likeNotification(`A blog ${blogObject.title} by  ${user.name}  successfully updated`))
-
-      setTimeout(() => {
-        dispatch(removeNotification())
-      }, 5000)
-      /*
-      //Onnistuneesta lisäyksestä selaimeen viesti 5 sec
-      setAddedMessage(`A blog ${blogObject.title} by  ${user.name}  successfully updated`)
-      setTimeout(() => {
-        setAddedMessage(null)
-      }, 5000)
-      */
-      //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
-    } catch (exception) {
-      //setErrorMessage('Jokin meni pieleen')
-      console.log('Jokin meni pieleen')
-      setTimeout(() => {
-        //setErrorMessage(null)
-      }, 5000)
-    }
-
-  }
-
-  //-----------------LIKETYKSEN LISÄÄMINEN LOPPUU-------------------------------------------
-
-  //-----------------BLOGIN POISTAMINEN ALKAA-------------------------------------------
-  const deleteBlog = async (blogToBeDeleted) => {
-    console.log('BLOG TO BE DELETED ', blogToBeDeleted)
-    //Viedään käyttäjän token "services/blogs" fileen, jossa blogin
-    blogService.setToken(user.token)
-
-    //Blogin poistamine jos hyväksyy pop upissa "OK" buttonilla
-    if (window.confirm("Remove blog " + blogToBeDeleted.title + " by " + blogToBeDeleted.author + "?")) {
-      try {
-        //Luodaan blogi kantaan HUOM! async/await
-        await blogService.deleteBlog(blogToBeDeleted.id)
-        //Haetaan kaikki blogit kannasta deletoinnin jälkeen
-        //HUOM! async/await
-        const blogsAfterDelete = await blogService.getAll()
-        //Päivitetään näytettävää blogilistaa ei sis. deletoitua blogia
-        setBlogs(blogsAfterDelete.map(blog => blog))
-
-        //Onnistuneesta deletoinnista selaimeen viesti 5 sec
-        //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
-        //"src/components/Notification.js", "store.js" sekä "index.js"
-        dispatch(deleteNotification())
-
-        setTimeout(() => {
-          dispatch(removeNotification())
-        }, 5000)
-
-
-        //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
-      } catch (exception) {
-        //setErrorMessage('Jokin meni pieleen')
-        console.log('Jokin meni pieleen ')
-        setTimeout(() => {
-          //setErrorMessage(null)
-        }, 5000)
-
-      }
-    }
-
-  }
-
-  //-----------------BLOGIN POISTAMINEN LOPPUU-------------------------------------------
-
-
- 
   return (
     <div>
       <Notification />

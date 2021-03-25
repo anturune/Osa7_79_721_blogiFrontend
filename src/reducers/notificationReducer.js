@@ -7,7 +7,7 @@ const notificationReducer = (state = initialState, action) => {
     switch (action.type) {
 
         case 'LIKE_BLOG_NOTE':
-            console.log('TULIKO LIKETYS NOTIFICATION REDUCERIIN', action.data.content)
+            //console.log('TULIKO LIKETYS NOTIFICATION REDUCERIIN', action.data.content)
             return { ...state, value: 'BLOG LIKED: ' + action.data.content }
         //Luodaan uusi Blogi
         case 'NEW_BLOG_NOTE':

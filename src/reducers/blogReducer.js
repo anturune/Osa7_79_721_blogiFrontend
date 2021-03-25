@@ -11,10 +11,18 @@ const blogReducer = (state = initialState, action) => {
         case 'INIT_BLOGS':
             //console.log('INIT BLOGS', action.data)
             return action.data
-
+       
         case 'NEW_BLOG':
-            console.log('TULEEKO UUSI NEW_BLOG', action.data)
-            return [...state, action.data]
+            //console.log('TULEEKO UUSI NEW_BLOG', action.data)
+            return action.data
+
+        case 'LIKE':
+            //Palautetaan data sortattuna liketysten mukaan
+            return action.data.sort((a, b) => a.likes <= b.likes ? 1 : -1)
+
+        case 'DELETE_BLOG':
+            //console.log('DELETE BLOG CASE:', action.data)
+            return action.data
 
         default:
             return state
@@ -22,34 +30,67 @@ const blogReducer = (state = initialState, action) => {
 
 }
 
-//Haetaan aluksi kaikki blogit
+//Haetaan kaikki blogit eli kun loggauduttu sisään, ohjelma listaa
+//selaimelle kaikki blogit
 export const initializeBlogs = () => {
     return async dispatch => {
-        const blogs = await blogService.getAll()
+        //Haetaan kaikki blogit kannasta
+        const initialBlogs = await blogService.getAll()
         dispatch({
             type: 'INIT_BLOGS',
-            data: blogs,
+            data: initialBlogs
         })
     }
 }
 
-//Tällä Luodaan uusi blogi ja importataan esim. "App.js" fileen, josta
-//tänne tuodaan blogin contentti
-//Action on javascript objekti jolla on type -field.
-export const createNewBlog = (content) => {
-    console.log('TULIKO CREATE BLOGIIN', content)
-    return {
-        type: 'NEW_BLOG',
-        data: {
-            id:content.id,
-            user: content.user,
-            title: content.title,
-            author: content.author,
-            url: content.url,
-            likes: 0
-        }
+//Luodaan uusi blogi
+export const createNewBlog = (newBlogi) => {
+    console.log('TULIKO CREATE BLOGIIN', newBlogi)
+    return async dispatch => {
+        //Luodaan uusi blogi mongoon, uusi blogi objecti tulee "components/BlogForm" -komponentilta
+        await blogService.createBlog(newBlogi)
+        //Haetaan luonnin jälkee tietokannasta blogit (sisältää nyt myös uuden luodun)
+        const blogsAfterCreation = await blogService.getAll()
+        dispatch({
+            type: 'NEW_BLOG',
+            data: blogsAfterCreation
+        })
     }
 }
 
+//Blogin liketykseen
+export const likeBlog = (blogObject) => {
+    return async dispatch => {
+        //Lisätään blogille yksi uusi tykkäys
+        const blogObjectLiked = ({ ...blogObject, likes: blogObject.likes + 1 })
+        //Päivitetään blogi kantaan hyödyntäen "services/blogs.js"
+        //const likedBlog = await blogService.updateBlog(blogObjectLiked, blogObject.id)
+        await blogService.updateBlog(blogObjectLiked, blogObject.id)
+        const blogsAfterLiked = await blogService.getAll()
+        //const id = likedBlog.id
+        dispatch({
+            type: 'LIKE',
+            data: blogsAfterLiked
+        })
+    }
+}
+
+export const deleteAnyBlog = (blogObject, user) => {
+    return async dispatch => {
+        //Käyttäjän token annetaan, jotta varmistetaan, että on kirjautunut
+        //käyttäjä
+        blogService.setToken(user.token)
+        //Deletoidaan blogi kannasta
+        await blogService.deleteBlog(blogObject.id)
+        //Otetaan blogit kannasta deletoinnin jälkeen ja palautetaan ne
+        //reducerille ja storen päivitykselle
+        const blogsAfterDelete = await blogService.getAll()
+        //Viedään uusi blogilista storen tilan päivttämiseksi
+        dispatch({
+            type: 'DELETE_BLOG',
+            data: blogsAfterDelete
+        })
+    }
+}
 
 export default blogReducer

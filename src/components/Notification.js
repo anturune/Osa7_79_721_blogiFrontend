@@ -15,7 +15,7 @@ const Notification = () => {
     //Ks. notificationReducder.js filestä 
     //const initialState = { value: 'INITIAL NOTIFICATION' }
     //siksi alla tarvitaan "notification.value"
-    console.log('MIKÄ ARVO NOTIFICAATIOLLA ', notification.value)
+    //console.log('MIKÄ ARVO NOTIFICAATIOLLA ', notification.value)
 
     if (notification.value !== null) {
         return (

@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-
+import { useDispatch } from 'react-redux'
+import { likeBlog, deleteAnyBlog } from '../reducers/blogReducer'
+import { removeNotification, deleteNotification } from '../reducers/notificationReducer'
 
 //Sisältää liketysten päivityksen ja päivitys tietokantaan
 //tehdään updateBlog komponentilla, joka tuodaan tähän "updateBlog:lla"
 //HUOM! App.js filessä olevassa updateBlog komponentissa on mukana id:n vastaanottokin
-const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
   //Blogin tila, joka määrittelee kumpi return palautetaan
   const [view, setView] = useState(false)
-
+  const dispatch = useDispatch()
   //Tämä muuttaa blogin tilaa eli määärää sen kumpa return palautetaan
   const toggleVisibility = () => {
     if (!view) {
@@ -18,29 +20,46 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
     }
   }
 
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA--------------------------
-  //Tässä käytetään parametria "updateBlog", jonka toiminnallisuus on App.js filessä
-  //HUOM! App.js:ssä oleva "updateBlog" komponentti sisältää myös blogin ID:n syöttömahdollisuuden
-  //ja se on tässä toisena parametrina. Eka on "blogobjectin sisältö" ja toinen on "blogin ID"
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA REDUX--------------------------
+  //Blogin liketys reduxilla
   const likes = () => {
-    updateBlog({
-      user: blog.user.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1
-    }, blog.id)
-
-    //console.log('BLOGIN ID', blog.id)
+    dispatch(likeBlog(blog))
   }
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU---------------------------
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU REDUX---------------------------
 
-  //-------------------BLOGIN DELETOINTI ALKAA-----------------------------------
-  //Blogin deletointiin riittää pelkkä ID:n lähettäminen "src/services/blogs.js" fileen
+  //-------------------BLOGIN DELETOINTI ALKAA REDUX-----------------------------------
+  //Blogin deletointiin reduxilla
   const blogDeletion = () => {
-    deleteBlog(blog)
+
+    //Pyydetään vahvistamaan, että haluaa tosiaan poistaa Pop up window
+    if (window.confirm("Remove blog " + blog.title + " by " + blog.author + "?")) {
+      try {
+        //Viedään blogReducerille blogi, joka poistettava ja sekä userin tieto joka
+        //haluaa poistaa=kirjautunut käyttäjä
+        dispatch(deleteAnyBlog(blog, user))
+        //Onnistuneesta deletoinnista selaimeen viesti 5 sec
+        //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+        //"src/components/Notification.js", "store.js" sekä "index.js"
+        dispatch(deleteNotification())
+        setTimeout(() => {
+          dispatch(removeNotification())
+        }, 5000)
+        //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
+      } catch (exception) {
+        //setErrorMessage('Jokin meni pieleen')
+        console.log('Jokin meni pieleen ')
+        setTimeout(() => {
+          //setErrorMessage(null)
+        }, 5000)
+
+      }
+    }
+
+
+
+    //deleteBlog(blog)
   }
-  //-------------------BLOGIN DELETOINTI LOPPUU------------------------------------
+  //-------------------BLOGIN DELETOINTI LOPPUU REDUX------------------------------------
 
 
   //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille

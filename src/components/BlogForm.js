@@ -1,7 +1,6 @@
 import React, { useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { createNewBlog } from '../reducers/blogReducer'
-import blogService from '../services/blogs'
 import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
 import Togglable from '../components/Togglable'
 
@@ -35,12 +34,12 @@ const BlogForm = () => {
         event.target.newUrl.value = ''
         try {
             //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
-            const uusiBlogi = await blogService.createBlog(newBlogi)
+            //const uusiBlogi = await blogService.createBlog(newBlogi)
             //Viedään uusi blogi reducerille
-            dispatch(createNewBlog(uusiBlogi))
+            dispatch(createNewBlog(newBlogi))
             //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
             //"src/components/Notification.js", "store.js" sekä "index.js"
-            dispatch(createNewNotification(`A new blog  ${uusiBlogi.title}  ${uusiBlogi.author} successfully added`))
+            dispatch(createNewNotification(`A new blog  ${newBlogi.title}  ${newBlogi.author} successfully added`))
             setTimeout(() => {
                 dispatch(removeNotification())
             }, 5000)
@@ -52,13 +51,11 @@ const BlogForm = () => {
                 //setErrorMessage(null)
             }, 5000)
         }
-        //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
-        //samalla kun uuden muistiinpanon luominen tapahtuu
 
     }
     //-----------------REDUX------------------------------------------------------------
 
-    //Luomisformi on kuorittu "Togglable" -komponentin sisälle, jotta "new blog" ja "cancel" 
+    //Luomisformi on kääritty "Togglable" -komponentin sisälle, jotta "new blog" ja "cancel" 
     //napit joko näyttää tai haidaa luomisformin. Kun mennään "addBlog" funktioon "create"
     //napin klikkauksen jälkeen, niin funktiossa "addBlog" haidataan formi
     return (
