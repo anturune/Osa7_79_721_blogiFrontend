@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 //näin komponentti pääsee käsiksi sille määriteltyyn refiin, tässä halutaan
 //päästä blogFormRef:iin joka tulee tänne App.js filestä
 const Togglable = React.forwardRef((props, ref) => {
+    //console.log('TOGGLABLE', props, ref)
     const [visible, setVisible] = useState(false)
 
     const hideWhenVisible = { display: visible ? 'none' : '' }

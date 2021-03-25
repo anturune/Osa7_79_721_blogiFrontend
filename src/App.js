@@ -8,8 +8,11 @@ import loginService from './services/login'
 //Buttonien näkyvyyttä säätelemään
 import Togglable from './components/Togglable'
 import { useDispatch } from 'react-redux'
-import { createNewNotification, removeNotification, likeNotification, credentialsNotification, deleteNotification } from './reducers/notificationReducer'
+import { removeNotification, likeNotification, credentialsNotification, deleteNotification } from './reducers/notificationReducer'
 import { Notification } from './components/Notification'
+import { initializeBlogs } from './reducers/blogReducer'
+import { BlogList } from './components/BlogList'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,16 +20,17 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
 
-  //Effect hook hakemaan kaikki blogit kun sivu ladataan
+
+  //console.log('APP:sta kaikki blogit', blogs)
+
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-
-  }, [])
-
+    dispatch(initializeBlogs())
+    //Jos ei lisätä hakasulkeiden sisään "dispatch" tulee eslint herja
+    //toimisi ilman "dispatch" tekstiä myös vaikka herja jäisikin
+  }, [dispatch])
 
   //Effect hook hakemaan locla storagesta loggautuneen käyttäjän tiedot
   //ettei pyydä sivun uudelleen latauksen yhteydessä uudelleen kirjautumaan
@@ -42,7 +46,7 @@ const App = () => {
   }, [])
 
   //Tämä tarvitaan reduxia/reducereita varten
-  const dispatch = useDispatch()
+  //const dispatch = useDispatch()
   //----------------------- LOGOUT JA LOGIN-----------------------------------
   //Kirjautumislomakkeen lähettämisestä vastaava metodi
   const handleLogin = async (event) => {
@@ -129,50 +133,10 @@ const App = () => {
   )
 
   //----------------------- LOGOUT JA LOGIN LOPPUU-----------------------------------
+  /*
 
-  //-----------------UUDEN BLOGIN LUOMINEN-------------------------------------------
-  const addBlog = async (blogObject) => {
-    //Estää lomakkeen lähetyksen oletusarvoisen toiminnan, 
-    //joka aiheuttaisi mm. sivun uudelleenlatautumisen. 
-    //event.preventDefault()
-    console.log('UUSI BLOGI ON SYNTYMÄSSÄ')
-
-    //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
-    //samalla kun uuden muistiinpanon luominen tapahtuu
-    blogFormRef.current.toggleVisibility()
-
-    //Viedään käyttäjän token "services/blogs" fileen, jossa uuden blogin
-    blogService.setToken(user.token)
-
-    try {
-      //Luodaan blogi kantaan HUOM! async/await
-      await blogService.createBlog(blogObject)
-
-      //Haetaan kaikki blogit kannasta uuden lisäyksen jälkeen
-      //HUOM! async/await
-      const blogsAfterAdd = await blogService.getAll()
-
-      //Päivitetään näytettävää blogilistaa sis. uuden blogin
-      setBlogs(blogsAfterAdd.map(blog => blog))
-
-      //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
-      //"src/components/Notification.js", "store.js" sekä "index.js"
-      dispatch(createNewNotification(`A new blog  ${blogObject.title}  ${user.name} successfully added`))
-      setTimeout(() => {
-        dispatch(removeNotification())
-      }, 5000)
-      //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
-    } catch (exception) {
-      //setErrorMessage('Jokin meni pieleen')
-      console.log('JOKIN MENI PIELEEN')
-      setTimeout(() => {
-        //setErrorMessage(null)
-      }, 5000)
-    }
-
-  }
-
-  //-----------------UUDEN BLOGIN LUOMINEN LOPPUU-------------------------------------------
+  
+ */
 
   //-----------------LIKETYKSEN LISÄÄMINEN ALKAA-------------------------------------------
 
@@ -272,37 +236,7 @@ const App = () => {
   //-----------------BLOGIN POISTAMINEN LOPPUU-------------------------------------------
 
 
-  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA ALKAA------------
-  //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
-  //Togglable-komponentille. Nyt siis muuttuja blogFormRef toimii viitteenä komponenttiin.
-  const blogFormRef = useRef()
-
-  //Renderöitävä blogiformi ja tähän liittyvä komponentti
-  //"src/components/blogform", Create Button käyttöön vain halutessa
-  //Ja buttonin nimeksi tulee "new blog" ks. Togglable ja BlogForm komponentit
-  //käytössä on nyt avaava ja sulkeva tagi, joiden sisällä määritellään toinen 
-  //komponentti eli LoginForm
-  //Togglablen avaavan ja sulkevan tagin sisälle voi sijoittaa lapsiksi mitä 
-  //tahansa React-elementtejä
-  //blogFormRef:llä luomislomakkeen sulkeminen luonnin jälkeen
-  const blogForm = () => (
-    <Togglable buttonLabel="new blog" hideLabel="cancel" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
-    </Togglable>
-  )
-
-
-  //Blogien renderöintiin. "src/components/Blog.js" renderöidään show ja hide napit
-  //joilla saa valittua mitä blogista näytetään
-  //Sekä sorttaus niin, että eniten tykkäyksiä saanut blogi näytetään ensiksi
-  //HUOM! Tässä näytetään kaikki blogit, ei vain kirjautuneen käyttäjän
-  //Sisältää myös "deleteBlog" toiminnallisuuden lähettämisen "src/components/Blog.js" fileen
-  const showHide = () => (
-    blogs
-      .sort((a, b) => a.likes < b.likes ? 1 : -1)
-      .map(blog => <Blog key={blog.id} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} user={user} />
-      ))
-  //----------------UUDEN BLOGIN LUOMINEN KUN BLOGIN FORMI NÄYTETÄÄN VAIN HALUTESSA LOPPUU------------
+ 
   return (
     <div>
       <Notification />
@@ -310,9 +244,9 @@ const App = () => {
         loginForm() :
         <div>
           <p>{user.name} logged in {logoutForm()}</p>
-          {blogForm()}
+          <BlogForm />
           <h2>YOUR BLOGS</h2>
-          {showHide()}
+          <BlogList user={user} />
         </div>
       }
     </div>

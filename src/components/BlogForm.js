@@ -1,60 +1,86 @@
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { createNewBlog } from '../reducers/blogReducer'
+import blogService from '../services/blogs'
+import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
+import Togglable from '../components/Togglable'
+
 
 //Uuden blogiin liittyvät tilankäsittelijät
-const BlogForm = ({ createBlog }) => {
-    const [newTitle, setNewTitle] = useState('')
-    const [newAuthor, setNewAuthor] = useState('')
-    const [newUrl, setNewUrl] = useState('')
-
-    //Hallitsee title kentässä olevat muutokset
-    const handleTitleChange = (event) => {
-        //console.log('HandleTitleChange', event.target.value.toLowerCase())
-        setNewTitle(event.target.value)
-    }
-
-    //Hallitsee Author kentässä olevat muutokset
-    const handleAuthorChange = (event) => {
-        //console.log('HandleAuthorChange', event.target.value.toLowerCase())
-        setNewAuthor(event.target.value)
-    }
-    //Hallitsee url kentässä olevat muutokset
-    const handleUrlChange = (event) => {
-        //console.log('HandleURLChange', event.target.value.toLowerCase())
-        setNewUrl(event.target.value)
-    }
+const BlogForm = () => {
+    //-----------------REDUX------------------------------------------------------------
+    const dispatch = useDispatch()
+    //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
+    //Togglable-komponentille. Nyt siis muuttuja blogFormRef toimii viitteenä komponenttiin.
+    const blogFormRef = useRef()
     //Alla olvassa "onSubmit" -käskyssä viittaus tänne
-    const addBlog = (event) => {
+    const addBlog = async (event) => {
         event.preventDefault()
-        //console.log('TULIKO TÄNNE')
-        createBlog({
-            title: newTitle,
-            author: newAuthor,
-            url: newUrl
+        //console.log('ADDBLOG EVENT TITLE', event.target.newTitle.value)
+
+        //Haidataan luomisformi heti, kun on painettu "create"-nappia
+        //hyödynnetään blogFormRef viitteenä "Togglable" komponenttiin
+        blogFormRef.current.toggleVisibility()
+
+        //Otetaan kenttiin tallennetut arvot talteen
+        //ja luodann blogi object
+        const newBlogi = ({
+            title: event.target.newTitle.value,
+            author: event.target.newAuthor.value,
+            url: event.target.newUrl.value
         })
-        //Tyhjätään luonnin jälkeen kentät title, author ja Url
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
+        //Tyhjätään arvot
+        event.target.newTitle.value = ''
+        event.target.newAuthor.value = ''
+        event.target.newUrl.value = ''
+        try {
+            //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
+            const uusiBlogi = await blogService.createBlog(newBlogi)
+            //Viedään uusi blogi reducerille
+            dispatch(createNewBlog(uusiBlogi))
+            //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
+            //"src/components/Notification.js", "store.js" sekä "index.js"
+            dispatch(createNewNotification(`A new blog  ${uusiBlogi.title}  ${uusiBlogi.author} successfully added`))
+            setTimeout(() => {
+                dispatch(removeNotification())
+            }, 5000)
+            //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
+        } catch (exception) {
+            //setErrorMessage('Jokin meni pieleen')
+            console.log('JOKIN MENI PIELEEN')
+            setTimeout(() => {
+                //setErrorMessage(null)
+            }, 5000)
+        }
+        //Piilotetaan luomislomake kutsumalla noteFormRef.current.toggleVisibility() 
+        //samalla kun uuden muistiinpanon luominen tapahtuu
+
     }
+    //-----------------REDUX------------------------------------------------------------
 
-
+    //Luomisformi on kuorittu "Togglable" -komponentin sisälle, jotta "new blog" ja "cancel" 
+    //napit joko näyttää tai haidaa luomisformin. Kun mennään "addBlog" funktioon "create"
+    //napin klikkauksen jälkeen, niin funktiossa "addBlog" haidataan formi
     return (
         < div >
             <h2>CREATE NEW BLOG</h2>
-            <form onSubmit={addBlog}>
-                <div>
-                    Title: <input id='title' value={newTitle} onChange={handleTitleChange} />
-                </div>
-                <div>
-                    Author: <input id='author' value={newAuthor} onChange={handleAuthorChange} />
-                </div>
-                <div>
-                    Url: <input id='url' value={newUrl} onChange={handleUrlChange} />
-                </div>
-                <br></br>
-                <button id='submit-button' type="submit">create</button>
-            </form>
+            <Togglable buttonLabel="new blog" hideLabel="cancel" ref={blogFormRef}>
+                <form onSubmit={addBlog}>
+                    <div>
+                        Title: <input name="newTitle" />
+                    </div>
+                    <div>
+                        Author: <input name="newAuthor" />
+                    </div>
+                    <div>
+                        Url: <input name="newUrl" />
+                    </div>
+                    <br></br>
+                    <button id='submit-button' type="submit">create</button>
+                </form>
+            </Togglable>
         </div >
     )
 }
+
 export default BlogForm
