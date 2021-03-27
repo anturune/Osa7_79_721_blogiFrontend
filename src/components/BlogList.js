@@ -8,7 +8,7 @@ import Blog from '../components/Blog'
 //Blogien listaus eristetty omaan moduuliin
 const BlogList = ({ user }) => {
 
-    //Tähän pitää laittaa "state.anecdotes", koska monta reduceria
+    //Tähän pitää laittaa "state.blogs", koska monta reduceria
     const blogs = useSelector(state => state.blogs)
     //console.log('BLOG LIST Component', blogs)
 

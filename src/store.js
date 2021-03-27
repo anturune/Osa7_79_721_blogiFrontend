@@ -4,6 +4,7 @@ import thunk from 'redux-thunk'
 
 import blogReducer from './reducers/blogReducer'
 import notificationReducer from './reducers/notificationReducer'
+import loginReducer from './reducers/loginReducer'
 
 //import blogService from './services/blogs'
 
@@ -11,7 +12,8 @@ import notificationReducer from './reducers/notificationReducer'
 //Luodaan combineReducer, jotta voidaan käyttää useamppaa reduceria
 const reducer = combineReducers({
     notification: notificationReducer,
-    blogs: blogReducer
+    blogs: blogReducer,
+    login: loginReducer
 })
 
 const store = createStore(
