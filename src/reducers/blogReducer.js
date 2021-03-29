@@ -1,4 +1,4 @@
-
+import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
 //Tämä import tarvitaan, kun haetaan data serveriltä
 import blogService from '../services/blogs'
 
@@ -11,7 +11,7 @@ const blogReducer = (state = initialState, action) => {
         case 'INIT_BLOGS':
             //console.log('INIT BLOGS', action.data)
             return action.data
-       
+
         case 'NEW_BLOG':
             //console.log('TULEEKO UUSI NEW_BLOG', action.data)
             return action.data
@@ -47,14 +47,27 @@ export const initializeBlogs = () => {
 export const createNewBlog = (newBlogi) => {
     console.log('TULIKO CREATE BLOGIIN', newBlogi)
     return async dispatch => {
-        //Luodaan uusi blogi mongoon, uusi blogi objecti tulee "components/BlogForm" -komponentilta
-        await blogService.createBlog(newBlogi)
-        //Haetaan luonnin jälkee tietokannasta blogit (sisältää nyt myös uuden luodun)
-        const blogsAfterCreation = await blogService.getAll()
-        dispatch({
-            type: 'NEW_BLOG',
-            data: blogsAfterCreation
-        })
+        try {
+            //Luodaan uusi blogi mongoon, uusi blogi objecti tulee "components/BlogForm" -komponentilta
+            await blogService.createBlog(newBlogi)
+            dispatch(createNewNotification(`A new blog  ${newBlogi.title}  ${newBlogi.author} successfully added`))
+            setTimeout(() => {
+                dispatch(removeNotification())
+            }, 5000)
+            //Haetaan luonnin jälkee tietokannasta blogit (sisältää nyt myös uuden luodun)
+            const blogsAfterCreation = await blogService.getAll()
+            dispatch({
+                type: 'NEW_BLOG',
+                data: blogsAfterCreation
+            })
+        } catch (exception) {
+            //setErrorMessage('Jokin meni pieleen')
+            console.log('JOKIN MENI PIELEEN')
+            dispatch(createNewNotification(`Blog creation failed, contact to system admin`))
+            setTimeout(() => {
+                dispatch(removeNotification())
+            }, 5000)
+        }
     }
 }
 

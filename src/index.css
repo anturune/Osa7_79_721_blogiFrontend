@@ -36,3 +36,11 @@ body {
     padding: 10px;
     margin-bottom: 10px;
   }
+
+  .top{
+    vertical-align:top;
+  }
+
+  .bottom{
+    vertical-align:bottom;
+  }

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import { createNewBlog } from '../reducers/blogReducer'
-import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
+//import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
 import Togglable from '../components/Togglable'
 
 
@@ -32,25 +32,11 @@ const BlogForm = () => {
         event.target.newTitle.value = ''
         event.target.newAuthor.value = ''
         event.target.newUrl.value = ''
-        try {
-            //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
-            //const uusiBlogi = await blogService.createBlog(newBlogi)
-            //Viedään uusi blogi reducerille
-            dispatch(createNewBlog(newBlogi))
-            //Luodaan notificaatio notificationReducerilla ks. "src/components/reducers/notificationReducer.js"
-            //"src/components/Notification.js", "store.js" sekä "index.js"
-            dispatch(createNewNotification(`A new blog  ${newBlogi.title}  ${newBlogi.author} successfully added`))
-            setTimeout(() => {
-                dispatch(removeNotification())
-            }, 5000)
-            //Jos lisääminen ei onnistu, annetaan herja käyttäjälle
-        } catch (exception) {
-            //setErrorMessage('Jokin meni pieleen')
-            console.log('JOKIN MENI PIELEEN')
-            setTimeout(() => {
-                //setErrorMessage(null)
-            }, 5000)
-        }
+
+        //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
+        //const uusiBlogi = await blogService.createBlog(newBlogi)
+        //Viedään uusi blogi reducerille
+        dispatch(createNewBlog(newBlogi))
 
     }
     //-----------------REDUX------------------------------------------------------------
