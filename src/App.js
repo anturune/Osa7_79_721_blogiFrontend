@@ -8,6 +8,7 @@ import LoginForm from './components/LoginForm'
 import LogoutForm from './components/LogoutForm'
 import { BlogList } from './components/BlogList'
 import { UserList } from './components/UserList'
+import User from './components/User'
 import BlogForm from './components/BlogForm'
 
 import {
@@ -20,6 +21,7 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom"
+
 
 const App = () => {
   const dispatch = useDispatch()
@@ -42,6 +44,18 @@ const App = () => {
     //toimisi ilman "dispatch" tekstiä myös vaikka herja jäisikin
   }, [dispatch])
 
+
+  //"routeMatch":n käyttö, kun halutaan käyttää yksittäisen userin
+  //etsiminen ID:n perusteella ennen komponentille lähettämistä
+  //HUOM! Käytettäessä useRouteMatch:a pitää siirtää Router tägi ulkopuolelle,
+  //tässä siirretty "index.js"-fileen
+  const users = useSelector(state => state.users)
+  const match = useRouteMatch('/users/:id')
+  const userById = match
+    ? users.find(user => user.id === match.params.id)
+    : null
+
+  console.log('blogsUserById', userById)
   //HUOM! Routereiden järjestys, koska jos path "/" olisi ensimmäisenä,
   //niin näkyisi aina kaikki blogit
   return (
@@ -52,8 +66,12 @@ const App = () => {
         <LoginForm />
         :
         <div>
+          <h2 >blogs</h2>
           <LogoutForm user={user.value.name} />
           <Switch>
+            <Route path="/users/:id">
+              <User user={userById} />
+            </Route>
             <Route path="/users">
               <h2>USERS</h2>
               <UserList />

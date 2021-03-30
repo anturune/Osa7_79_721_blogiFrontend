@@ -7,6 +7,9 @@ import { removeNotification, deleteNotification } from '../reducers/notification
 //tehdään updateBlog komponentilla, joka tuodaan tähän "updateBlog:lla"
 //HUOM! App.js filessä olevassa updateBlog komponentissa on mukana id:n vastaanottokin
 const Blog = ({ blog, user }) => {
+
+  console.log('TULEEKO BLOG COMPONENTTIIN USERI', user.username)
+
   //Blogin tila, joka määrittelee kumpi return palautetaan
   const [view, setView] = useState(false)
   const dispatch = useDispatch()
