@@ -13,19 +13,17 @@ const LogoutForm = (name) => {
     const handleLogout = (event) => {
         //Login reducerille logout action creatorille
         dispatch(logoutFromBlogApp())
-        
+
     }
 
     return (
-        <div>
-            <div>
+        
+            <>
                 {name.user} logged in
-            </div>
-            <div>
                 <button onClick={handleLogout} >logout</button>
-            </div>
-            <br></br>
-        </div>
+            </>
+
+       
     )
 
 }

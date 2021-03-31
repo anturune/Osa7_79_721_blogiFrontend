@@ -11,25 +11,40 @@ import { UserList } from './components/UserList'
 import User from './components/User'
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
+import './index.css'
 
 import {
   Switch,
   Route,
   useRouteMatch,
   Redirect,
+  Link,
 } from "react-router-dom"
 /*
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
+  
   Redirect,
   useParams,
   useHistory,
   useRouteMatch,
 } from "react-router-dom"
 */
+
+const Menu = ({ user }) => {
+  const padding = {
+    paddingRight: 10
+  }
+  return (
+    <div className="navbar">
+      <Link to='/blogs' style={padding}>Blogs</Link>
+      <Link to='/users' style={padding}>Users</Link>
+      <LogoutForm user={user.value.name} />
+    </div>
+  )
+}
 
 const App = () => {
   const dispatch = useDispatch()
@@ -88,14 +103,14 @@ const App = () => {
   //niin näkyisi aina kaikki blogit
   return (
     <div>
-      <Notification />
+
       {user.value === null
         ?
         <LoginForm />
         :
         <div>
-          <h2 >blogs</h2>
-          <LogoutForm user={user.value.name} />
+          <Menu user={user} />
+          <Notification />
           <Switch>
             <Route path="/users/:id">
               <User user={userById} />
@@ -107,9 +122,15 @@ const App = () => {
               <h2>USERS</h2>
               <UserList />
             </Route>
+            <Route path="/blogs">
+              <h3>Blog app</h3>
+              <BlogForm user={user.value} />
+              <BlogList user={user.value} />
+            </Route>
             <Route path="/">
+              <h2 >Blog App</h2>
               <BlogForm />
-              <h2>YOUR BLOGS</h2>
+              <h2>All blogs</h2>
               <BlogList user={user.value} />
             </Route>
           </Switch>

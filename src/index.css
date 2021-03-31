@@ -36,6 +36,14 @@ body {
     padding: 10px;
     margin-bottom: 10px;
   }
+  .navbar {
+    color: rgb(8, 8, 8);
+    background: lightgrey;
+    font-size: 20px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
 
   .top{
     vertical-align:top;

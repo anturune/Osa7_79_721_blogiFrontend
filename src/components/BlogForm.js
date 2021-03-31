@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux'
 import { createNewBlog } from '../reducers/blogReducer'
 //import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
 import Togglable from '../components/Togglable'
+import blogService from '../services/blogs'
 
 
 //Uuden blogiin liittyvät tilankäsittelijät
-const BlogForm = () => {
+const BlogForm = ({ user }) => {
     //-----------------REDUX------------------------------------------------------------
     const dispatch = useDispatch()
     //useRef hookilla luodaan ref blogFormRef, joka kiinnitetään blogin luomislomakkeen sisältävälle 
@@ -35,18 +36,22 @@ const BlogForm = () => {
 
         //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
         //const uusiBlogi = await blogService.createBlog(newBlogi)
-        //Viedään uusi blogi reducerille
-        dispatch(createNewBlog(newBlogi))
+        //Viedään uusi blogi reducerille sekä useri, jotta voidaan välittää userin
+        //Token "services/blogs.js":lle
+        dispatch(createNewBlog(newBlogi, user))
 
     }
     //-----------------REDUX------------------------------------------------------------
+    console.log('BLOGFORM USER', user)
+
+    
 
     //Luomisformi on kääritty "Togglable" -komponentin sisälle, jotta "new blog" ja "cancel" 
     //napit joko näyttää tai haidaa luomisformin. Kun mennään "addBlog" funktioon "create"
     //napin klikkauksen jälkeen, niin funktiossa "addBlog" haidataan formi
     return (
         < div >
-            <h2>CREATE NEW BLOG</h2>
+            <h3>CREATE NEW BLOG</h3>
             <Togglable buttonLabel="new blog" hideLabel="cancel" ref={blogFormRef}>
                 <form onSubmit={addBlog}>
                     <div>

@@ -44,17 +44,23 @@ export const initializeBlogs = () => {
 }
 
 //Luodaan uusi blogi
-export const createNewBlog = (newBlogi) => {
+export const createNewBlog = (newBlogi, user) => {
     console.log('TULIKO CREATE BLOGIIN', newBlogi)
+
     return async dispatch => {
         try {
             //Luodaan uusi blogi mongoon, uusi blogi objecti tulee "components/BlogForm" -komponentilta
+            console.log('CreateBlogreducer', user)
+            //Asetetaan token "services/blogs.js" filelle, jotta luominen onnistuu myös
+            //sivun refreshauksen jälkeen
+            blogService.setToken(user.token)
             await blogService.createBlog(newBlogi)
             dispatch(createNewNotification(`A new blog  ${newBlogi.title}  ${newBlogi.author} successfully added`))
             setTimeout(() => {
                 dispatch(removeNotification())
             }, 5000)
             //Haetaan luonnin jälkee tietokannasta blogit (sisältää nyt myös uuden luodun)
+
             const blogsAfterCreation = await blogService.getAll()
             dispatch({
                 type: 'NEW_BLOG',

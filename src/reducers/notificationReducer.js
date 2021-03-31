@@ -1,5 +1,5 @@
 //Annetaan initial arvo notification objectille
-const initialState = { value: 'Mukavaa päivää' }
+const initialState = { value: null }
 
 
 const notificationReducer = (state = initialState, action) => {
