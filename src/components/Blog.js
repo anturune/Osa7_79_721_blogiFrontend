@@ -1,35 +1,35 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
-import { likeBlog, deleteAnyBlog } from '../reducers/blogReducer'
-import { removeNotification, deleteNotification } from '../reducers/notificationReducer'
+import { likeBlog } from '../reducers/blogReducer'
+//import { removeNotification, deleteNotification } from '../reducers/notificationReducer'
+import { useSelector } from 'react-redux'
+import {
+  useRouteMatch
+} from "react-router-dom"
 
 //Sisältää liketysten päivityksen ja päivitys tietokantaan
 //tehdään updateBlog komponentilla, joka tuodaan tähän "updateBlog:lla"
 //HUOM! App.js filessä olevassa updateBlog komponentissa on mukana id:n vastaanottokin
-const Blog = ({ blog, user }) => {
+const Blog = ({ user }) => {
 
   console.log('TULEEKO BLOG COMPONENTTIIN USERI', user.username)
-
-  //Blogin tila, joka määrittelee kumpi return palautetaan
-  const [view, setView] = useState(false)
-  const dispatch = useDispatch()
-  //Tämä muuttaa blogin tilaa eli määärää sen kumpa return palautetaan
-  const toggleVisibility = () => {
-    if (!view) {
-      setView(true)
+  /*
+    //Blogin tila, joka määrittelee kumpi return palautetaan
+    const [view, setView] = useState(false)
+    
+    //Tämä muuttaa blogin tilaa eli määärää sen kumpa return palautetaan
+    const toggleVisibility = () => {
+      if (!view) {
+        setView(true)
+      }
+      else if (view) {
+        setView(false)
+      }
     }
-    else if (view) {
-      setView(false)
-    }
-  }
+  */
 
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA REDUX--------------------------
-  //Blogin liketys reduxilla
-  const likes = () => {
-    dispatch(likeBlog(blog))
-  }
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU REDUX---------------------------
 
+  /*
   //-------------------BLOGIN DELETOINTI ALKAA REDUX-----------------------------------
   //Blogin deletointiin reduxilla
   const blogDeletion = () => {
@@ -57,14 +57,29 @@ const Blog = ({ blog, user }) => {
 
       }
     }
+*/
 
+  const blogs = useSelector(state => state.blogs)
+  const match = useRouteMatch('/blogs/:id')
+  const blogById = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
+  console.log('BLOGBYID', blogById)
 
-
-    //deleteBlog(blog)
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA REDUX--------------------------
+  const dispatch = useDispatch()
+  //Blogin liketys reduxilla
+  const likes = () => {
+    dispatch(likeBlog(blogById))
   }
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU REDUX---------------------------
+
+
+  //deleteBlog(blog)
+
   //-------------------BLOGIN DELETOINTI LOPPUU REDUX------------------------------------
 
-
+/*
   //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille
   const blogStyle = {
     paddingTop: 10,
@@ -73,20 +88,46 @@ const Blog = ({ blog, user }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+  */
 
+  /*
   //Näytetään vain blogin title, jos ei ole painettu view nappia
-  if (!view) {
+  //Linkit yksittäisiin blogeihin
+  if (!blogById) {
     return (
       <div style={blogStyle}>
         <div>
-          {blog.title} {blog.author}
-          <button id='view' onClick={toggleVisibility}>view</button>
+          <Link to={`/blogs/${blog.id}`}> {blog.title} {blog.author} </Link>
         </div>
       </div>
     )
   }
+*/
+  //Tämä tarvitaan, koska muuten blogi ei heti ehdi reactille
+  //ja päätyy muuten virheeseen
+  if (!blogById) {
+    return null
+  }
+
+  return (
+    <div>
+      <div>
+        <h2>{blogById.title} {blogById.author}</h2>
+      </div>
+      <div>
+        {blogById.url}
+        <br></br>
+          likes: {blogById.likes}
+        <button id='like' onClick={likes}>like</button>
+        <br></br>
+          Added by: {blogById.user.name}
+      </div>
+    </div>
+  )
+}
 
 
+/*
   //Näytetään kaikki blogin tiedot, jos on painettu view nappia
   //Hide napilla sitten uudelleen piiloon
 
@@ -95,7 +136,6 @@ const Blog = ({ blog, user }) => {
       <div style={blogStyle}>
         <div>
           {blog.title} {blog.author}
-          <button onClick={toggleVisibility}>hide</button>
         </div>
         <div>
           {blog.url}
@@ -131,6 +171,7 @@ const Blog = ({ blog, user }) => {
       </div>
     )
   }
-}
+  */
+
 
 export default Blog

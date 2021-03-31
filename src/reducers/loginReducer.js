@@ -63,9 +63,9 @@ export const logoutFromBlogApp = () => {
     window.localStorage.clear()
     //Asetetaan token tyhjäksi ettei voi enää esim. luoda uusia blogeja
     blogService.setToken('')
-    return {
+    return ({
         type: 'LOGOUT'
-    }
+    })
 }
 
 

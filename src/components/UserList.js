@@ -1,16 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import User from '../components/User'
+//import User from '../components/User'
 
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
-    useParams,
-    useHistory,
-    useRouteMatch,
+    Link
 } from "react-router-dom"
 
 

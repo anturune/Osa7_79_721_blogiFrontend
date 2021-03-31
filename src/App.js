@@ -10,7 +10,15 @@ import { BlogList } from './components/BlogList'
 import { UserList } from './components/UserList'
 import User from './components/User'
 import BlogForm from './components/BlogForm'
+import Blog from './components/Blog'
 
+import {
+  Switch,
+  Route,
+  useRouteMatch,
+  Redirect,
+} from "react-router-dom"
+/*
 import {
   BrowserRouter as Router,
   Switch,
@@ -21,7 +29,7 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom"
-
+*/
 
 const App = () => {
   const dispatch = useDispatch()
@@ -44,7 +52,7 @@ const App = () => {
     //toimisi ilman "dispatch" tekstiä myös vaikka herja jäisikin
   }, [dispatch])
 
-
+  //--------------YKSITTÄISEN USERIN JA BLOGIN HAKEMINEN ID:N PERUSTEELLA/ROUTER ALKAA----------------
   //"routeMatch":n käyttö, kun halutaan käyttää yksittäisen userin
   //etsiminen ID:n perusteella ennen komponentille lähettämistä
   //HUOM! Käytettäessä useRouteMatch:a pitää siirtää Router tägi ulkopuolelle,
@@ -54,8 +62,28 @@ const App = () => {
   const userById = match
     ? users.find(user => user.id === match.params.id)
     : null
-
-  console.log('blogsUserById', userById)
+  console.log('USERBYID', userById)
+  /*
+    const blogs = useSelector(state => state.blogs)
+    const match = useRouteMatch('/blogs/:id')
+    const blogById = match
+      ? blogs.find(blog => blog.id === match.params.id)
+      : null
+    console.log('BLOGBYID', blogById)
+    */
+  //--------------YKSITTÄISEN USERIN JA BLOGIN HAKEMINEN ID:N PERUSTEELLA/ROUTER LOPPUU-----------------
+  /*
+  console.log('USER AFTER LOGOUT', user)
+  if (!user.value) {
+    return (
+      <Switch>
+        <Route >
+          <Redirect to="/" />
+        </Route>
+      </Switch>
+    )
+  }
+*/
   //HUOM! Routereiden järjestys, koska jos path "/" olisi ensimmäisenä,
   //niin näkyisi aina kaikki blogit
   return (
@@ -71,6 +99,9 @@ const App = () => {
           <Switch>
             <Route path="/users/:id">
               <User user={userById} />
+            </Route>
+            <Route path="/blogs/:id">
+              <Blog user={user} />
             </Route>
             <Route path="/users">
               <h2>USERS</h2>

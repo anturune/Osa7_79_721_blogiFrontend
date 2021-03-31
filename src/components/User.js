@@ -1,14 +1,5 @@
 import React from 'react'
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
-    useParams,
-    useHistory,
-    useRouteMatch,
-} from "react-router-dom"
+
 
 //Käyttäjän ja käyttäjän blogien renderöintiin
 const User = ({ user }) => {
