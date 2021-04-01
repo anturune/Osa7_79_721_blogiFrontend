@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { likeBlog } from '../reducers/blogReducer'
+import { likeBlog, commentBlog } from '../reducers/blogReducer'
 //import { removeNotification, deleteNotification } from '../reducers/notificationReducer'
 import { useSelector } from 'react-redux'
 import {
@@ -66,29 +66,42 @@ const Blog = ({ user }) => {
     : null
   console.log('BLOGBYID', blogById)
 
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN ALKAA REDUX--------------------------
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN JA COMMENTOINTI ALKAA REDUX--------------------------
   const dispatch = useDispatch()
   //Blogin liketys reduxilla
   const likes = () => {
     dispatch(likeBlog(blogById))
   }
-  //-------------------LIKETYSTEN PÄIVITTÄMINEN LOPPUU REDUX---------------------------
+  //Blogin commentointi reduxilla
+  const addComment = (event) => {
+    event.preventDefault()
+    //Luodaan uusi commentti, jotta voidaan uudn taulukon luonnin yhteydessä lisätä uusi commentti
+    //"blogReducer.js" filessä
+    const newComment = event.target.newComment.value
+    //Tyhjätään arvot kentästä
+    event.target.newComment.value = ''
+
+    dispatch(commentBlog(blogById, newComment))
+
+  }
+
+  //-------------------LIKETYSTEN PÄIVITTÄMINEN JA COMMENTOINTI ALKAA REDUX--------------------------
 
 
   //deleteBlog(blog)
 
   //-------------------BLOGIN DELETOINTI LOPPUU REDUX------------------------------------
 
-/*
-  //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-  */
+  /*
+    //Ulkoasun muokkaukseen. Kehä ympärille jokaiselle blogille
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5
+    }
+    */
 
   /*
   //Näytetään vain blogin title, jos ei ole painettu view nappia
@@ -102,7 +115,7 @@ const Blog = ({ user }) => {
       </div>
     )
   }
-*/
+  */
   //Tämä tarvitaan, koska muuten blogi ei heti ehdi reactille
   //ja päätyy muuten virheeseen
   if (!blogById) {
@@ -121,6 +134,19 @@ const Blog = ({ user }) => {
         <button id='like' onClick={likes}>like</button>
         <br></br>
           Added by: {blogById.user.name}
+      </div><br></br>
+      <div>
+        <h3>comments:</h3>
+        <form onSubmit={addComment}>
+          <div>
+            <input name="newComment" />
+            <button id='submit-button' type="submit">add comment</button>
+          </div>
+        </form>
+        {blogById.comments
+          .map((comment, index) =>
+            <li key={index}> {comment}</li>
+          )}
       </div>
     </div>
   )

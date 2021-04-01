@@ -24,6 +24,10 @@ const blogReducer = (state = initialState, action) => {
             //console.log('DELETE BLOG CASE:', action.data)
             return action.data
 
+        case 'COMMENT_BLOG':
+            //console.log('DELETE BLOG CASE:', action.data)
+            return action.data
+
         default:
             return state
     }
@@ -90,6 +94,25 @@ export const likeBlog = (blogObject) => {
         dispatch({
             type: 'LIKE',
             data: blogsAfterLiked
+        })
+    }
+}
+
+//Commentin lisäämiseen
+export const commentBlog = (blogObject, newComment) => {
+    return async dispatch => {
+        //Lisätään blogille yksi uusi commentti
+        ////HUOM! React js:ssä ei koskaan päivitetä taulukkoa vaan
+        //vanha korvataan aina uudella
+        const blogObjectCommented = ({ ...blogObject, comments: blogObject.comments.concat(newComment) })
+        //Päivitetään blogi kantaan hyödyntäen "services/blogs.js"
+        await blogService.updateBlog(blogObjectCommented, blogObject.id)
+        const blogsAfterCommented = await blogService.getAll()
+        console.log('BLOGSAFTER COMMENTED', blogsAfterCommented)
+        //const id = blogsAfterCommented.id
+        dispatch({
+            type: 'COMMENT_BLOG',
+            data: blogsAfterCommented
         })
     }
 }
