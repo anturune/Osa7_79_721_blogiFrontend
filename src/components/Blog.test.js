@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect'
 //Nappien paineluun ja niiden testaamiseeen
 import { render, fireEvent } from '@testing-library/react'
 //yksittäisen elemntin tulostamiseen consoleen
-import { prettyDOM } from '@testing-library/dom'
+//import { prettyDOM } from '@testing-library/dom'
 import Blog from './Blog'
 
 //----------TESTI, ETTÄ ENNEN NAPIN PAINALLUKSIA RENDERÖIDÄÄN VAIN TITLE JA AUTHOR ALKAA--------

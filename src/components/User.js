@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Table } from 'react-bootstrap'
 
 //Käyttäjän ja käyttäjän blogien renderöintiin
 const User = ({ user }) => {
@@ -11,15 +11,29 @@ const User = ({ user }) => {
     }
     const blogs = user.blogs
     //console.log('USER COMPONENT BLOGS', blogs)
+    //HUOM! Bootstrap tyyli
     return (
-        <div><h2>{user.name}</h2>
-            <h3>added blogs</h3>
-            { blogs
-                .map(blog =>
-                    <li key={blog.id}>
-                        {blog.title}
-                    </li>
-                )}</div>)
+        <div>
+            <br></br>
+            <h2>{user.name}</h2>
+            <Table striped bordered hover size="sm">
+                <thead>
+                    <tr>
+                        <th>ADDED BLOGS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {blogs
+                        .map(blog =>
+                            <tr key={blog.id}>
+                                <td>
+                                    {blog.title}
+                                </td>
+                            </tr>
+                        )}
+                </tbody>
+            </Table>
+        </div>)
 }
 
 export default User

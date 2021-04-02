@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { logoutFromBlogApp } from '../reducers/loginReducer'
+import { Button } from 'react-bootstrap'
 
 
 //----------------------- LOGOUT -----------------------------------
@@ -20,7 +21,7 @@ const LogoutForm = (name) => {
         
             <>
                 {name.user} logged in
-                <button onClick={handleLogout} >logout</button>
+                <Button onClick={handleLogout} >logout</Button>
             </>
 
        

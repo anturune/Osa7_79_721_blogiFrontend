@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Alert } from 'react-bootstrap'
 
 //Notificaatio joka renderöidään. Tähän viittaus "App.js" filessä
 //"App.js" filessä ensin importattu käyttöön
@@ -7,20 +8,15 @@ const Notification = () => {
 
     const notification = useSelector(state => state.notification)
 
-    const style = {
-        border: 'solid',
-        padding: 10,
-        borderWidth: 1
-    }
-    //Ks. notificationReducder.js filestä 
-    //const initialState = { value: 'INITIAL NOTIFICATION' }
-    //siksi alla tarvitaan "notification.value"
-    //console.log('MIKÄ ARVO NOTIFICAATIOLLA ', notification.value)
-
+    //Bootstrap stylellä Alert
+    //Ks. https://react-bootstrap.github.io/components/alerts/
     if (notification.value !== null) {
         return (
-            <div style={style}>
-                {notification.value}
+            <div className="container">
+                {notification.value &&
+                    <Alert variant="success">
+                        {notification.value}
+                    </Alert>}
             </div>
         )
     }

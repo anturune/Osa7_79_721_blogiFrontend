@@ -38,7 +38,7 @@ export const createNewNotification = (content) => {
     }
 }
 
-//Tällä actionilla annetaan käsky palauttaa "NEW_BLOG_NOTE" tila 
+//Tällä actionilla annetaan käsky palauttaa "DELETE_BLOG_NOTE" tila 
 //Action on javascript objekti jolla on type -field.
 export const deleteNotification = () => {
     return {
@@ -56,7 +56,7 @@ export const removeNotification = () => {
     }
 }
 
-//Tällä actionilla annetaan käsky palauttaa "LIKE_BLOG" tila 
+//Tällä actionilla annetaan käsky palauttaa "LIKE_BLOG_NOTE" tila 
 //Action on javascript objekti jolla on type -field.
 export const likeNotification = (content) => {
     return {

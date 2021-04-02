@@ -49,12 +49,12 @@ export const initializeBlogs = () => {
 
 //Luodaan uusi blogi
 export const createNewBlog = (newBlogi, user) => {
-    console.log('TULIKO CREATE BLOGIIN', newBlogi)
+    //console.log('TULIKO CREATE BLOGIIN', newBlogi)
 
     return async dispatch => {
         try {
             //Luodaan uusi blogi mongoon, uusi blogi objecti tulee "components/BlogForm" -komponentilta
-            console.log('CreateBlogreducer', user)
+            //console.log('CreateBlogreducer', user)
             //Asetetaan token "services/blogs.js" filelle, jotta luominen onnistuu myös
             //sivun refreshauksen jälkeen
             blogService.setToken(user.token)
@@ -72,7 +72,7 @@ export const createNewBlog = (newBlogi, user) => {
             })
         } catch (exception) {
             //setErrorMessage('Jokin meni pieleen')
-            console.log('JOKIN MENI PIELEEN')
+            //console.log('JOKIN MENI PIELEEN')
             dispatch(createNewNotification(`Blog creation failed, contact to system admin`))
             setTimeout(() => {
                 dispatch(removeNotification())
@@ -108,7 +108,7 @@ export const commentBlog = (blogObject, newComment) => {
         //Päivitetään blogi kantaan hyödyntäen "services/blogs.js"
         await blogService.updateBlog(blogObjectCommented, blogObject.id)
         const blogsAfterCommented = await blogService.getAll()
-        console.log('BLOGSAFTER COMMENTED', blogsAfterCommented)
+        //console.log('BLOGSAFTER COMMENTED', blogsAfterCommented)
         //const id = blogsAfterCommented.id
         dispatch({
             type: 'COMMENT_BLOG',

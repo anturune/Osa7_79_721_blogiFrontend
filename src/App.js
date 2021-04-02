@@ -17,7 +17,6 @@ import {
   Switch,
   Route,
   useRouteMatch,
-  Redirect,
   Link,
 } from "react-router-dom"
 /*
@@ -25,7 +24,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  
   Redirect,
   useParams,
   useHistory,
@@ -33,12 +31,16 @@ import {
 } from "react-router-dom"
 */
 
+//Yläpalkin menu komponentti. Olisi voinut tehdä myös "src/components"
+//mutta ei jaksanut
 const Menu = ({ user }) => {
   const padding = {
     paddingRight: 10
   }
+  //Bootsrapin vuoksi className="container"
   return (
-    <div className="navbar">
+
+    <div className="container">
       <Link to='/blogs' style={padding}>Blogs</Link>
       <Link to='/users' style={padding}>Users</Link>
       <LogoutForm user={user.value.name} />
@@ -60,7 +62,7 @@ const App = () => {
     //toimisi ilman "dispatch" tekstiä myös vaikka herja jäisikin
   }, [dispatch])
 
-
+  //Haetaan effect hookilla kaikki käyttäjät
   useEffect(() => {
     dispatch(initializeUsers())
     //Jos ei lisätä hakasulkeiden sisään "dispatch" tulee eslint herja
@@ -77,38 +79,18 @@ const App = () => {
   const userById = match
     ? users.find(user => user.id === match.params.id)
     : null
-  console.log('USERBYID', userById)
-  /*
-    const blogs = useSelector(state => state.blogs)
-    const match = useRouteMatch('/blogs/:id')
-    const blogById = match
-      ? blogs.find(blog => blog.id === match.params.id)
-      : null
-    console.log('BLOGBYID', blogById)
-    */
-  //--------------YKSITTÄISEN USERIN JA BLOGIN HAKEMINEN ID:N PERUSTEELLA/ROUTER LOPPUU-----------------
-  /*
-  console.log('USER AFTER LOGOUT', user)
-  if (!user.value) {
-    return (
-      <Switch>
-        <Route >
-          <Redirect to="/" />
-        </Route>
-      </Switch>
-    )
-  }
-*/
+  //console.log('USERBYID', userById)
+  //--------------YKSITTÄISEN USERIN JA BLOGIN HAKEMINEN ID:N PERUSTEELLA/ROUTER LOPPUU----------------
   //HUOM! Routereiden järjestys, koska jos path "/" olisi ensimmäisenä,
   //niin näkyisi aina kaikki blogit
+  //Bootstrapia varten className="container"
   return (
-    <div>
-
+    <div className="container">
       {user.value === null
         ?
         <LoginForm />
         :
-        <div>
+        <div className="container">
           <Menu user={user} />
           <Notification />
           <Switch>

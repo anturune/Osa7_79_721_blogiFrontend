@@ -1,36 +1,37 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { loginToBlogApp } from '../reducers/loginReducer'
+import { Form, Button } from 'react-bootstrap'
 
 //Login lomakkeelle oma komponentti
+//HUOM! Bootstrap tyylit
 const LoginLomake = ({ onChangeUsername, onChangePassword, valueUsername, valuePassword, onSubmit }) => {
     return (
         <div>
             <h2>Login to apllication</h2>
-            <form onSubmit={onSubmit}>
-                <div>
-                    username <input
+            <Form onSubmit={onSubmit}>
+                <Form.Group>
+                    <Form.Label>username:</Form.Label>
+                    <Form.Control
                         id='username'
                         type="text"
                         value={valueUsername}
                         name="Username"
-                        onChange={onChangeUsername} />
-
-                </div>
-                <div>
-                    password <input
+                        onChange={onChangeUsername}
+                    />
+                    <Form.Label>password:</Form.Label>
+                    <Form.Control
                         id='password'
                         type="password"
                         value={valuePassword}
                         name="Password"
-                        onChange={onChangePassword} />
-                </div>
-                <div>
-                    <button
-                        id='login-button'
-                        type="submit">login</button>
-                </div>
-            </form>
+                        onChange={onChangePassword}
+                    />
+                    <Button variant="primary" type="submit" id='login-button'>
+                        login
+                    </Button>
+                </Form.Group>
+            </Form>
         </div>
     )
 }

@@ -1,11 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-//import Blog from '../components/Blog'
-//import { voteAnecdote } from '../reducers/anecdoteReducer'
-//import { voteNotification, removeNotification } from '../reducers/notificationReducer'
-import {
-    Link
-} from "react-router-dom"
+import { Link } from "react-router-dom"
+//Bootstrap table komponentti
+//HUOM! Asenna bootstrap ja päivitä "public/index.html"
+import { Table } from 'react-bootstrap'
 
 
 //Blogien listaus eristetty omaan moduuliin
@@ -15,40 +13,39 @@ const BlogList = ({ user }) => {
     const blogs = useSelector(state => state.blogs)
     //console.log('BLOG LIST Component', blogs)
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5
-    }
 
-    //Blogien renderöintiin. "src/components/Blog.js" renderöidään show ja hide napit
+    //Blogien renderöintiin. "src/components/Blog.js" renderöidään
     //joilla saa valittua mitä blogista näytetään
     //Sekä sorttaus niin, että eniten tykkäyksiä saanut blogi näytetään ensiksi
     //HUOM! Tässä näytetään kaikki blogit, ei vain kirjautuneen käyttäjän
-    //Sisältää myös "deleteBlog" toiminnallisuuden lähettämisen "src/components/Blog.js" fileen
+    //HUOM! Bootstrab Table tyyli ks. yllä myös "Tabel":n importti
 
     return (
-        blogs
-            .sort((a, b) => a.likes < b.likes ? 1 : -1)
-            .map(blog =>
-                <div key={blog.id} style={blogStyle}>
-                    <Link to={`/blogs/${blog.id}`}> {blog.title} {blog.author} </Link>
-                </div>
-            ))
-    /*
-    return (
-        blogs
-            .sort((a, b) => a.likes < b.likes ? 1 : -1)
-            .map(blog =>
-                <Blog
-                    key={blog.id}
-                    blog={blog}
-                    user={user}
-                />
-            ))
-            */
+        <div>
+            <Table striped bordered hover size="sm">
+                <thead>
+                    <tr>
+                        <th>Blog title</th>
+                        <th>Number of blogs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {blogs
+                        .sort((a, b) => a.likes < b.likes ? 1 : -1)
+                        .map(blog =>
+                            <tr key={blog.id}>
+                                <td>
+                                    <Link to={`/blogs/${blog.id}`}> {blog.title}</Link>
+                                </td>
+                                <td>
+                                    {blog.author}
+                                </td>
+                            </tr>
+                        )}
+                </tbody>
+            </Table>
+        </div>)
+
 }
 
 export { BlogList }

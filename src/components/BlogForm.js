@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux'
 import { createNewBlog } from '../reducers/blogReducer'
 //import { createNewNotification, removeNotification } from '../reducers/notificationReducer'
 import Togglable from '../components/Togglable'
-import blogService from '../services/blogs'
+//import blogService from '../services/blogs'
+import { Form, Button } from 'react-bootstrap'
 
 
-//Uuden blogiin liittyvät tilankäsittelijät
+//Uuden blogin luominen
 const BlogForm = ({ user }) => {
     //-----------------REDUX------------------------------------------------------------
     const dispatch = useDispatch()
@@ -35,37 +36,36 @@ const BlogForm = ({ user }) => {
         event.target.newUrl.value = ''
 
         //Luodaan uusi blogi Mongoon ks. "src/services/blogs.js"
-        //const uusiBlogi = await blogService.createBlog(newBlogi)
         //Viedään uusi blogi reducerille sekä useri, jotta voidaan välittää userin
         //Token "services/blogs.js":lle
         dispatch(createNewBlog(newBlogi, user))
 
     }
     //-----------------REDUX------------------------------------------------------------
-    console.log('BLOGFORM USER', user)
+    //console.log('BLOGFORM USER', user)
 
-    
+
 
     //Luomisformi on kääritty "Togglable" -komponentin sisälle, jotta "new blog" ja "cancel" 
     //napit joko näyttää tai haidaa luomisformin. Kun mennään "addBlog" funktioon "create"
     //napin klikkauksen jälkeen, niin funktiossa "addBlog" haidataan formi
     return (
         < div >
-            <h3>CREATE NEW BLOG</h3>
-            <Togglable buttonLabel="new blog" hideLabel="cancel" ref={blogFormRef}>
-                <form onSubmit={addBlog}>
-                    <div>
-                        Title: <input name="newTitle" />
-                    </div>
-                    <div>
-                        Author: <input name="newAuthor" />
-                    </div>
-                    <div>
-                        Url: <input name="newUrl" />
-                    </div>
-                    <br></br>
-                    <button id='submit-button' type="submit">create</button>
-                </form>
+            <br></br>
+            <h6>CREATE NEW BLOG</h6>
+            <Togglable hideLabel="cancel" buttonLabel="new blog"  ref={blogFormRef}>
+                <Form onSubmit={addBlog}>
+                    <Form.Group>
+                        <Form.Label>Title:</Form.Label>
+                        <Form.Control name="newTitle" />
+                        <Form.Label>Author:</Form.Label>
+                        <Form.Control name="newAuthor" />
+                        <Form.Label>Url:</Form.Label>
+                        <Form.Control name="newUrl" />
+                        <br></br>
+                        <Button id='submit-button' type="submit">create</Button>
+                    </Form.Group>
+                </Form>
             </Togglable>
         </div >
     )

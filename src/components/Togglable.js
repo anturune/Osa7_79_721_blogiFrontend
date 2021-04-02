@@ -1,6 +1,6 @@
 import React, { useState, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
-
+import { Button } from 'react-bootstrap'
 //Komponentin luova funktio on kääritty funktiokutsun forwardRef sisälle, 
 //näin komponentti pääsee käsiksi sille määriteltyyn refiin, tässä halutaan
 //päästä blogFormRef:iin joka tulee tänne App.js filestä
@@ -36,11 +36,11 @@ const Togglable = React.forwardRef((props, ref) => {
     return (
         <div>
             <div style={hideWhenVisible}>
-                <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+                < Button onClick={toggleVisibility}>{props.buttonLabel}</ Button>
             </div>
             <div style={showWhenVisible}>
                 {props.children}
-                <button onClick={toggleVisibility}>{props.hideLabel}</button>
+                < Button onClick={toggleVisibility}>{props.hideLabel}</ Button>
             </div>
         </div>
     )
